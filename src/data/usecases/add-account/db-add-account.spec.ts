@@ -5,10 +5,10 @@ const makeAddAccountRepository = (): AddAccountRepositiry => {
   class AddAccountRepositoryStub implements AddAccountRepositiry {
     async add (account: AddAccountModel): Promise<AccountModel> {
       const fakeAccount = {
-        id: 'valied_id',
+        id: 'valid_id',
         name: 'valid_name',
         email: 'valid_email',
-        password: 'hashed_passowrd'
+        password: 'hashed_password'
       }
       return await new Promise(resolve => resolve(fakeAccount))
     }
@@ -87,7 +87,7 @@ describe('DbAddAccount Usecase', () => {
 
     })
   })
-  //
+
   test('Should throw if addAccountRepositoryStub throws', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     jest.spyOn(addAccountRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
@@ -100,5 +100,25 @@ describe('DbAddAccount Usecase', () => {
     const promise = sut.add(accountData)
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return an account on success', async () => {
+    const { sut } = makeSut()
+
+    const accountData = {
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'hashed_password'
+    }
+
+    const account = await sut.add(accountData)
+
+    expect(account).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'hashed_password'
+
+    })
   })
 })
